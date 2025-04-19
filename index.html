@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+        gtag('config', 'G-FKSEWZCG5R');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jakiano The Barber</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+    <link rel="icon" type="images/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="images/png" sizes="16x16" href="favicon-16x16.png">
+</head>
+
+<body>
+    <nav>
+        <img src="images/images0.png" alt="Jakiano The Barber Logo" width="80px">
+        <ul class="sidebar-nav">
+            <li><button><a href="index.html">Home</a></button></li>
+            <li><button><a href=index2.html>Contact</a></button></li>
+        </ul>
+    </nav>
+    <br>
+    <div class="hero">
+        <img src="images/images1.png" alt="Work 1">
+        <img src="images/images2.png" alt="Work 2">
+        <img src="images/images3.png" alt="Work 3">
+        <img src="images/images4.png" alt="Work 4">
+        <img src="images/images5.png" alt="Work 5">
+    </div>
+    <h1 id="moving-title">Welcome to Jakiano The Barber</h1>
+    <hr>
+    <hr>
+    <p1>Premium haircuts with style and precision</p1>
+    <div class="gallery-preview">
+        <h2>Gallery</h2>
+        <div class="slider">
+            <div class="slides" id="gallerySlides">
+                <!-- Default images -->
+                <img src="images/images0.png" alt="Haircut 1" class="slide">
+                <img src="images/images1.png" alt="Haircut 2" class="slide">
+                <img src="images/images2.png" alt="Haircut 3" class="slide">
+                <img src="images/images3.png" alt="Haircut 4" class="slide">
+                <img src="images/images4.png" alt="Haircut 5" class="slide">
+            </div>
+            <!-- Navigation buttons -->
+            <button class="prev" onclick="moveSlide(-1)">&#10094;</button>
+            <button class="next" onclick="moveSlide(1)">&#10095;</button>
+        </div>
+        <!-- Indicators -->
+        <div class="indicators" id="galleryIndicators">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+            <span class="dot" onclick="currentSlide(5)"></span>
+        </div>
+    </div>
+
+    <!-- Modal for opening images -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+        <div id="caption"></div>
+    </div>
+
+    <section id="menu" class="menu">
+        <h2>Services & Prices</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Haircut</td>
+                    <td>$20</td>
+                </tr>
+                <tr>
+                    <td>Beard Trim</td>
+                    <td>$15</td>
+                </tr>
+                <tr>
+                    <td>Shave</td>
+                    <td>$10</td>
+                </tr>
+                <tr>
+                    <td>Haircut & Beard Trim</td>
+                    <td>$30</td>
+                </tr>
+
+                <tr>
+                    <td>Haircut</td>
+                    <td>$20</td>
+                </tr>
+                <tr>
+                    <td>Beard Trim</td>
+                    <td>$20</td>
+                </tr>
+                <tr>
+                    <td>Shave</td>
+                    <td>$10</td>
+                </tr>
+                <tr>
+                    <td>Haircut & Beard Trim</td>
+                    <td>$30</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+</body>
