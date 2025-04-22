@@ -1,83 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner Login</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .login-container {
-            background: #fff;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            text-align: center;
-        }
-
-        .login-container h1 {
-            margin-bottom: 1rem;
-            color: #333;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        form label {
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            text-align: left;
-        }
-
-        form input {
-            margin-bottom: 1rem;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        form button {
-            background-color: #007BFF;
-            color: #fff;
-            border: none;
-            padding: 0.5rem;
-            cursor: pointer;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        form button:hover {
-            background-color: #0056b3;
-        }
-    </style>
-</head>
-
-<body>
-    <div class="login-container">
-        <h1>Owner Login</h1>
-        <form action="/login" method="POST">
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required>
-
-            <label for="password">Password:</label>
-            <input type="password" id="password" name="password" required>
-
-            <button type="submit">Login</button>
-        </form>
-    </div>
-</body>
-
-</html>
+// Login route in app.js
+app.post('/login', (req, res) => {
+    const { username, password } = req.body;
+    
+    if (username === ownerUsername && password === ownerPassword) {
+        req.session.loggedIn = true;
+        res.redirect('/gallery.html'); // Redirect to your upload page
+    } else {
+        // Simple styled error message with a link to retry login
+        res.send(`
+            <html>
+                <head>
+                    <title>Login Failed</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            text-align: center;
+                            padding: 3rem;
+                            background-color: #f8d7da;
+                            color: #721c24;
+                        }
+                        a {
+                            color: #721c24;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>Invalid credentials</h2>
+                    <p>Please <a href="/login.html">try again</a></p>
+                </body>
+            </html>
+        `);
+    }
+});
