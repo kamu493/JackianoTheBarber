@@ -1,4 +1,3 @@
-This is my app.js is it good to be deployed in Render
 
 const express = require('express');
 
