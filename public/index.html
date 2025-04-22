@@ -95,7 +95,7 @@
         async function loadGallery() {
             try {
                 // Fetch the list of uploaded images from the backend
-                const response = await fetch('https://jackianothebarber.onrender.com');
+                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
                 const data = await response.json();
 
                 // Get the gallery container
