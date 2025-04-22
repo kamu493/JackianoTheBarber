@@ -119,7 +119,7 @@
             e.preventDefault();
             const formData = new FormData(e.target);
 
-            const response = await fetch('https://jackianothebarber.onrender.com', {
+            const response = await fetch('https://jackianothebarber.onrender.com/api/upload', {
     method: 'POST',
     body: formData,
 });
