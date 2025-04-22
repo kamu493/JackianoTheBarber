@@ -4,7 +4,7 @@ const path = require('path');
 const router = express.Router();
 
 // Gallery Endpoint
-router.get('/', (req, res) => {
+router.get('/gallery', (req, res) => {
     const uploadsDir = path.join(__dirname, '../public/uploads');
     fs.readdir(uploadsDir, (err, files) => {
         if (err) {
