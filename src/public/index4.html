@@ -1,35 +1,9 @@
-// Login route in app.js
-app.post('/login', (req, res) => {
-    const { username, password } = req.body;
-    
-    if (username === ownerUsername && password === ownerPassword) {
-        req.session.loggedIn = true;
-        res.redirect('/gallery.html'); // Redirect to your upload page
-    } else {
-        // Simple styled error message with a link to retry login
-        res.send(`
-            <html>
-                <head>
-                    <title>Login Failed</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            text-align: center;
-                            padding: 3rem;
-                            background-color: #f8d7da;
-                            color: #721c24;
-                        }
-                        a {
-                            color: #721c24;
-                            font-weight: bold;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h2>Invalid credentials</h2>
-                    <p>Please <a href="/login.html">try again</a></p>
-                </body>
-            </html>
-        `);
-    }
-});
+<form action="/login" method="POST">
+    <label for="username">Username:</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit">Login</button>
+</form>
