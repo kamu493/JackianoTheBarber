@@ -1,9 +1,8 @@
-
 let slideIndex = 0;
 const slidesContainer = document.getElementById("gallerySlides");
 const indicatorsContainer = document.getElementById("galleryIndicators");
 
-const baseURL = "https://jackianothebarber.onrender.com"; // Replace with your real Render backend URL
+const baseURL = "https://jackianothebarber.onrender.com"; // Backend URL
 
 // Show slides based on the current index
 function showSlides(index) {
@@ -35,97 +34,36 @@ function currentSlide(n) {
     showSlides(slideIndex);
 }
 
-// Handle image uploads in preview
-document.getElementById("imageUpload").addEventListener("change", function (event) {
-    const files = event.target.files;
-
-    Array.from(files).forEach((file, index) => {
-        const reader = new FileReader();
-
-        reader.onload = function (e) {
-            const newSlide = document.createElement("img");
-            newSlide.src = e.target.result;
-            newSlide.alt = `Uploaded Image ${slidesContainer.children.length + 1}`;
-            newSlide.className = "slide";
-
-            slidesContainer.appendChild(newSlide);
-
-            const newDot = document.createElement("span");
-            newDot.className = "dot";
-            newDot.onclick = () => currentSlide(slidesContainer.children.length);
-            indicatorsContainer.appendChild(newDot);
-        };
-
-        reader.readAsDataURL(file);
-    });
-
-    event.target.value = "";
-});
-
-showSlides(slideIndex);
-
-const loginForm = document.getElementById("login");
-const uploadSection = document.getElementById("uploadSection");
-const imageUpload = document.getElementById("imageUpload");
-const uploadButton = document.getElementById("uploadButton");
-let token = "";
-
-// Handle login
-loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
-
+// Load uploaded images from backend and build the slider
+async function loadSliderFromBackend() {
     try {
-        const response = await fetch(`${baseURL}/login`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, password }),
+        const response = await fetch(`${baseURL}/api/gallery`);
+        const data = await response.json();
+
+        slidesContainer.innerHTML = "";
+        indicatorsContainer.innerHTML = "";
+
+        data.gallery.forEach((url, index) => {
+            // Create slide
+            const slide = document.createElement("img");
+            slide.src = `${baseURL}${url}`;
+            slide.className = "slide";
+            slide.alt = `Slide ${index + 1}`;
+            slidesContainer.appendChild(slide);
+
+            // Create indicator
+            const dot = document.createElement("span");
+            dot.className = "dot";
+            dot.onclick = () => currentSlide(index + 1);
+            indicatorsContainer.appendChild(dot);
         });
 
-        if (response.ok) {
-            // If using sessions, you might not need this token logic
-            token = "session"; // Dummy value for session-based auth
-            document.getElementById("loginForm").style.display = "none";
-            uploadSection.style.display = "block";
-        } else {
-            alert("Invalid credentials");
-        }
-    } catch (error) {
-        console.error("Error logging in:", error);
+        // Start with the first slide
+        showSlides(slideIndex);
+    } catch (err) {
+        console.error("Failed to load gallery from backend:", err);
     }
-});
+}
 
-// Handle image uploads
-uploadButton.addEventListener("click", async () => {
-    const files = imageUpload.files;
-    const formData = new FormData();
-
-    for (let i = 0; i < files.length; i++) {
-        formData.append("file", files[i]); // 'file' must match backend multer.single('file')
-    }
-
-    try {
-        const response = await fetch(`${baseURL}/api/upload`, {
-            method: "POST",
-            body: formData,
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            const uploadedImages = document.getElementById("uploadedImages");
-
-            const img = document.createElement("img");
-            img.src = `${baseURL}${data.filePath}`;
-            img.alt = "Uploaded Image";
-            img.style.width = "150px";
-            img.style.margin = "10px";
-            uploadedImages.appendChild(img);
-        } else {
-            alert("Failed to upload image");
-        }
-    } catch (error) {
-        console.error("Error uploading image:", error);
-    }
-});
+// Call this on page load
+window.onload = loadSliderFromBackend;
