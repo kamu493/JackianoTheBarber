@@ -1,25 +1,30 @@
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const cloudinary = require('../cloudinaryConfig'); // make sure this file is set up
 const router = express.Router();
 
-// Configure Multer
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, path.join(__dirname, '../public/uploads'));
-    },
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
-    },
+// Configure Cloudinary Storage
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'jakiano-gallery',
+    allowed_formats: ['jpg', 'jpeg', 'png'],
+  },
 });
+
 const upload = multer({ storage });
 
 // Upload Endpoint
-router.post('/', upload.single('file'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('No file uploaded.');
-    }
-    res.status(200).json({ filePath: `/uploads/${req.file.filename}` });
+router.post('/', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No image uploaded' });
+  }
+
+  res.status(200).json({
+    url: req.file.path,             // This is the Cloudinary image URL
+    public_id: req.file.filename,   // This is the Cloudinary public ID (needed to delete)
+  });
 });
 
 module.exports = router;
