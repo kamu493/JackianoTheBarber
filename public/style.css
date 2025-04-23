@@ -157,6 +157,48 @@ p2 {
  
 }
 
+.slider-container {
+    position: relative;
+    max-width: 100%;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.slider img {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.indicators {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.indicators .dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 4px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.indicators .dot.active {
+    background-color: #333;
+}
+
 /* Gallery Preview Section */
 .gallery-preview {
     margin: 2rem auto;
