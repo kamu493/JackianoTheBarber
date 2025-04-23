@@ -2,135 +2,195 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Upload</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Image Upload</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      text-align: center;
+      padding: 1rem;
+    }
+    header, footer {
+      background: #333;
+      color: white;
+      padding: 1rem;
+    }
+    form {
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: 1rem auto;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    input[type="file"] {
+      width: 100%;
+      margin: 1rem 0;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      background: #333;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .gallery-item {
+      position: relative;
+      display: inline-block;
+    }
+    .gallery-item img {
+      width: 200px;
+      height: auto;
+      border-radius: 6px;
+    }
+    .delete-btn {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: red;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      border-radius: 3px;
+    }
+    .home-button {
+      margin-top: 1rem;
+    }
+    .home-button a {
+      text-decoration: none;
+      color: #fff;
+      background-color: #007BFF;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+    }
+  </style>
 </head>
 
-<style>
-    /* General Styles */
-    /* General Styles */
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f4f4f4;
-        color: #333;
-        text-align: center;
-    }
-
-    header {
-        background-color: #333;
-        color: #fff;
-        padding: 1rem 0;
-    }
-
-    header h1 {
-        margin: 0;
-        font-size: 2rem;
-    }
-
-    main {
-        padding: 2rem;
-    }
-
-    form {
-        margin: 2rem auto;
-        padding: 1rem;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        max-width: 400px;
-    }
-
-    form label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: bold;
-    }
-
-    form input[type="file"] {
-        margin-bottom: 1rem;
-        padding: 0.5rem;
-        width: 100%;
-    }
-
-    form button {
-        background-color: #333;
-        color: #fff;
-        border: none;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        border-radius: 4px;
-        font-size: 1rem;
-    }
-
-    form button:hover {
-        background-color: #555;
-    }
-
-    .home-button {
-        margin-top: 1rem;
-    }
-
-    .home-button a {
-        text-decoration: none;
-        color: #fff;
-        background-color: #007BFF;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
-    }
-
-    .home-button a:hover {
-        background-color: #0056b3;
-    }
-
-    footer {
-        margin-top: 2rem;
-        padding: 1rem;
-        background-color: #333;
-        color: #fff;
-    }
-</style>
-
 <body>
+  <header>
+    <h1>Admin Image Upload & Gallery</h1>
+  </header>
 
-    <header>
-        <h1>Upload Images to the Website</h1>
-    </header>
+  <main>
+    <form id="uploadForm" enctype="multipart/form-data">
+      <label for="file">Select an image to upload:</label>
+      <input type="file" id="file" name="file" required />
+      <button type="submit">Upload</button>
+    </form>
 
-    <main>
-        <form id="uploadForm" action="/api/upload" method="POST" enctype="multipart/form-data">
-            <label for="file">Choose an image to upload:</label>
-            <input type="file" id="file" name="file" required />
-            <button type="submit">Upload</button>
-        </form>
+    <div class="home-button">
+      <a href="index.html">Go to Home</a>
+    </div>
 
-        <button class="home-button"><a href="index.html">Go to Home</a></button>
-    </main>
+    <section class="gallery" id="gallery"></section>
+  </main>
 
-    <footer>
-        <p>&copy; 2025 Jakiano The Barber</p>
-    </footer>
+  <footer>
+    <p>&copy; 2025 Jakiano The Barber</p>
+  </footer>
 
-    <script>
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(e.target);
+  <script>
+    const baseURL = "https://jackianothebarber.onrender.com";
 
-            const response = await fetch('https://jackianothebarber.onrender.com/api/upload', {
-    method: 'POST',
-    body: formData,
-});
+    // Load images from server
+    async function loadGallery() {
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
 
-            if (response.ok) {
-                alert('Image uploaded successfully!');
-            } else {
-                alert('Failed to upload image.');
-            }
+      try {
+        const res = await fetch(`${baseURL}/api/gallery`);
+        const data = await res.json();
+
+        data.gallery.forEach((imgPath) => {
+          const filename = imgPath.split("/").pop();
+
+          const div = document.createElement("div");
+          div.className = "gallery-item";
+
+          const img = document.createElement("img");
+          img.src = `${baseURL}${imgPath}`;
+          img.alt = filename;
+
+          const btn = document.createElement("button");
+          btn.className = "delete-btn";
+          btn.innerText = "Delete";
+          btn.onclick = () => deleteImage(filename);
+
+          div.appendChild(img);
+          div.appendChild(btn);
+          gallery.appendChild(div);
         });
-    </script>
-</body>
+      } catch (err) {
+        console.error("Failed to load gallery", err);
+      }
+    }
 
+    // Upload image
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData();
+      const fileInput = document.getElementById("file");
+
+      formData.append("file", fileInput.files[0]);
+
+      try {
+        const res = await fetch(`${baseURL}/api/upload`, {
+          method: "POST",
+          body: formData,
+          credentials: "include" // Important for session auth
+        });
+
+        if (res.ok) {
+          alert("Image uploaded successfully!");
+          fileInput.value = "";
+          loadGallery();
+        } else {
+          alert("Failed to upload image.");
+        }
+      } catch (err) {
+        console.error("Upload error:", err);
+        alert("Upload failed.");
+      }
+    });
+
+    // Delete image
+    async function deleteImage(filename) {
+      const confirmDelete = confirm(`Delete "${filename}"?`);
+
+      if (!confirmDelete) return;
+
+      try {
+        const res = await fetch(`${baseURL}/api/delete/${filename}`, {
+          method: "DELETE",
+          credentials: "include" // Send session cookie
+        });
+
+        if (res.ok) {
+          alert("Image deleted.");
+          loadGallery();
+        } else {
+          alert("Failed to delete image.");
+        }
+      } catch (err) {
+        console.error("Delete error:", err);
+        alert("Error deleting image.");
+      }
+    }
+
+    loadGallery();
+  </script>
+</body>
 </html>
