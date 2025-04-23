@@ -5,101 +5,77 @@ const session = require('express-session');
 const multer = require('multer');
 const fs = require('fs');
 const cors = require('cors');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enable CORS
+// Configure CORS
 app.use(cors());
-
-// Owner credentials
-const ownerUsername = 'owner';
-const ownerPassword = 'password123';
-
-// Static files
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Uploads directory setup
-const uploadDir = path.join(__dirname, 'public/uploads');
-if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
-}
-
-// Multer config
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, uploadDir);
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
-const upload = multer({ storage });
-
-// Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Session setup
 app.use(session({
     secret: 'secret-key',
     resave: false,
     saveUninitialized: true
 }));
 
+// Cloudinary configuration
+cloudinary.config({
+    cloud_name: 'your_cloud_name',
+    api_key: 'your_api_key',
+    api_secret: 'your_api_secret'
+});
+
+// Cloudinary storage
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: 'jakiano-gallery',
+        allowed_formats: ['jpg', 'jpeg', 'png']
+    }
+});
+const upload = multer({ storage });
+
+// Owner credentials
+const ownerUsername = 'owner';
+const ownerPassword = 'password123';
+
 // Login route
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
-
     if (username === ownerUsername && password === ownerPassword) {
         req.session.loggedIn = true;
-        res.redirect('/gallery.html');
-    } else {
-        res.send(`
-            <html>
-                <head>
-                    <title>Login Failed</title>
-                    <style>
-                        body {
-                            font-family: Arial, sans-serif;
-                            background-color: #f8d7da;
-                            color: #721c24;
-                            padding: 2rem;
-                            text-align: center;
-                        }
-                        a {
-                            color: #721c24;
-                            text-decoration: underline;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <h2>Invalid username or password.</h2>
-                    <p><a href="/login.html">Try again</a></p>
-                </body>
-            </html>
-        `);
+        return res.redirect('/gallery.html');
     }
+    res.status(401).send('Invalid login');
 });
 
 // Upload route
 app.post('/api/upload', upload.single('file'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).json({ message: 'No file uploaded' });
-    }
-
-    const filePath = '/uploads/' + req.file.filename;
-    res.status(200).json({ filePath });
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    res.status(200).json({ filePath: req.file.path });
 });
 
-// Import and use gallery route
-const galleryRoute = require('./routes/galleryRoute');
-app.use('/api/gallery', galleryRoute);
-
-// Default route
-app.get('/', (req, res) => {
-    res.send('Backend is running...');
+// Gallery route - fetch from Cloudinary
+app.get('/api/gallery', async (req, res) => {
+    try {
+        const result = await cloudinary.search
+            .expression('folder:jakiano-gallery')
+            .sort_by('created_at', 'desc')
+            .max_results(50)
+            .execute();
+        const gallery = result.resources.map(file => file.secure_url);
+        res.json({ gallery });
+    } catch (error) {
+        res.status(500).json({ error: 'Unable to fetch gallery.' });
+    }
 });
 
 // Start server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+app.get('/', (req, res) => res.send('Backend is running...'));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
