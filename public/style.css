@@ -199,12 +199,6 @@ p2 {
     background-color: #333;
 }
 
-/* Gallery Preview Section */
-.gallery-preview {
-    margin: 2rem auto;
-    text-align: center;
-    max-width: 90%;
-}
 
 .gallery-preview h2 {
     font-size: 2rem;
@@ -214,27 +208,6 @@ p2 {
     border-radius: 20px;
 }
 
-/* Grid Layout */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    justify-items: center;
-    align-items: center;
-}
-
-.grid img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease
-}
-
-.grid img:hover {
-    transform: scale(1.05);
-    cursor: pointer;
-}
 
 nav ul {
     list-style: none;
@@ -255,8 +228,6 @@ nav a {
     transition: 0.3s ease-in-out;
     padding: 10px 20px;
     border-radius: 20px;
-   
-
 }
 
 
