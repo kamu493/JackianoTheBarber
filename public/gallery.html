@@ -98,20 +98,20 @@
       e.preventDefault();
       const formData = new FormData(e.target);
 
-      const uploadRes = await fetch('/api/upload', {
+      const res = await fetch('/api/gallery/upload', {
         method: 'POST',
         body: formData,
       });
 
-      const uploaded = await uploadRes.json();
-      if (!uploadRes.ok) {
+      const uploaded = await res.json();
+      if (res.ok) {
+        alert('Image uploaded');
+        fetchGallery();
+      } else {
         alert(uploaded.error || 'Upload failed');
-        return;
       }
 
-      alert('Upload successful!');
       e.target.reset();
-      fetchGallery();
     });
 
     fetchGallery();
