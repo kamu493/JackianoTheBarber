@@ -105,7 +105,7 @@
                 // Add each uploaded image to the gallery
                 data.gallery.forEach((url) => {
                     const img = document.createElement('img');
-                    img.src = 'https://jackianothebarber.onrender.com${url}'; // Set the image source to the uploaded image URL
+                    img.src = `https://jackianothebarber.onrender.com${url}`; // Set the image source to the uploaded image URL
                     img.alt = 'Uploaded Image';
                     img.className = 'grid'; // Add the "grid" class for styling
                     gallerySlides.appendChild(img);
