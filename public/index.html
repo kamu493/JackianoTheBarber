@@ -104,31 +104,77 @@
     </section>
 
     <script>
-        async function loadGallery() {
-            try {
-                // Fetch the list of uploaded images from the backend
-                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
-                const data = await response.json();
+    async function loadGallery() {
+        try {
+            const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
+            const data = await response.json();
 
-                // Get the gallery container
-                const gallerySlides = document.getElementById('galleryGrid');
-                gallerySlides.innerHTML = ''; // Clear existing images
+            const galleryGrid = document.getElementById('galleryGrid');
+            galleryGrid.innerHTML = '';
 
-                // Add each uploaded image to the gallery
-                data.gallery.forEach((url) => {
-                    const img = document.createElement('img');
-                    img.src = `https://jackianothebarber.onrender.com${url}`; // Set the image source to the uploaded image URL
-                    img.alt = 'Uploaded Image';
-                    img.className = 'grid'; // Add the "grid" class for styling
-                    gallerySlides.appendChild(img);
-                });
-            } catch (error) {
-                console.error('Error loading gallery:', error);
-            }
+            data.gallery.forEach((url) => {
+                const img = document.createElement('img');
+                img.src = `https://jackianothebarber.onrender.com${url}`;
+                img.alt = 'Uploaded Image';
+                img.className = 'grid';
+                galleryGrid.appendChild(img);
+            });
+        } catch (error) {
+            console.error('Error loading gallery:', error);
         }
+    }
 
-        // Load the gallery when the page loads
-        window.onload = loadGallery;       
-    </script>
+    async function loadSliderGallery() {
+        try {
+            const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
+            const data = await response.json();
+
+            const slider = document.getElementById('imageSlider');
+            const indicators = document.getElementById('sliderIndicators');
+
+            slider.innerHTML = '';
+            indicators.innerHTML = '';
+
+            let currentIndex = 0;
+
+            data.gallery.forEach((url, index) => {
+                const img = document.createElement('img');
+                img.src = `https://jackianothebarber.onrender.com${url}`;
+                img.alt = `Slide ${index + 1}`;
+                slider.appendChild(img);
+
+                const dot = document.createElement('span');
+                dot.className = 'dot';
+                if (index === 0) dot.classList.add('active');
+                dot.addEventListener('click', () => {
+                    currentIndex = index;
+                    updateSlider();
+                });
+                indicators.appendChild(dot);
+            });
+
+            function updateSlider() {
+                const offset = -currentIndex * 100;
+                slider.style.transform = `translateX(${offset}%)`;
+
+                const dots = indicators.querySelectorAll('.dot');
+                dots.forEach(dot => dot.classList.remove('active'));
+                dots[currentIndex].classList.add('active');
+            }
+
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % data.gallery.length;
+                updateSlider();
+            }, 4000);
+        } catch (err) {
+            console.error('Error loading slider gallery:', err);
+        }
+    }
+
+    window.onload = () => {
+        loadGallery();
+        loadSliderGallery();
+    };
+</script>       
 
 </body>
