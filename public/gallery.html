@@ -54,7 +54,7 @@
   <h1>Upload Images to Gallery</h1>
 
   <form id="uploadForm" enctype="multipart/form-data">
-    <input type="file" name="image" required />
+    <input type="file" name="file" required />
     <button type="submit">Upload</button>
   </form>
 
@@ -98,7 +98,7 @@
       e.preventDefault();
       const formData = new FormData(e.target);
 
-      const uploadRes = await fetch('/api/gallery/upload', {
+      const uploadRes = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });
@@ -109,16 +109,7 @@
         return;
       }
 
-      // Save image to gallery store
-      await fetch('/api/gallery/save-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          url: uploaded.url,
-          public_id: uploaded.public_id,
-        }),
-      });
-
+      alert('Upload successful!');
       e.target.reset();
       fetchGallery();
     });
