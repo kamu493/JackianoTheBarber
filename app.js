@@ -26,9 +26,9 @@ app.use(session({
 
 // Cloudinary configuration
 cloudinary.config({
-    cloud_name: 'your_cloud_name',
-    api_key: 'your_api_key',
-    api_secret: 'your_api_secret'
+    cloud_name: 'dkwl93p8f',
+    api_key: '859149683439439',
+    api_secret: 'SyuVSFSCXN8JZazE6giS_FSoOOk',
 });
 
 // Cloudinary storage
