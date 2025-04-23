@@ -93,6 +93,18 @@ app.get('/', (req, res) => {
     res.send('Backend is running...');
 });
 
+
+app.get('/api/gallery', (req, res) => {
+    fs.readdir(uploadDir, (err, files) => {
+        if (err) {
+            return res.status(500).json({ error: 'Unable to read uploads.' });
+        }
+
+        const gallery = files.map(file => '/uploads/' + file);
+        res.json({ gallery });
+    });
+});
+
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });
