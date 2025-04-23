@@ -45,11 +45,35 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Login route
 app.post('/login', (req, res) => {
     const { username, password } = req.body;
+
     if (username === ownerUsername && password === ownerPassword) {
         req.session.loggedIn = true;
-        res.status(200).json({ message: 'Login successful' });
+        res.redirect('/gallery.html'); // Redirect to the upload page
     } else {
-        res.status(401).json({ message: 'Invalid credentials' });
+        res.send(`
+            <html>
+                <head>
+                    <title>Login Failed</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            background-color: #f8d7da;
+                            color: #721c24;
+                            padding: 2rem;
+                            text-align: center;
+                        }
+                        a {
+                            color: #721c24;
+                            text-decoration: underline;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h2>Invalid username or password.</h2>
+                    <p><a href="/login.html">Try again</a></p>
+                </body>
+            </html>
+        `);
     }
 });
 
@@ -62,6 +86,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     const filePath = '/uploads/' + req.file.filename;
     res.status(200).json({ filePath });
 });
+
 
 // Default route
 app.get('/', (req, res) => {
