@@ -4,13 +4,13 @@ const path = require('path');
 const session = require('express-session');
 const multer = require('multer');
 const cors = require('cors');
-const { v2: cloudinary } = require('cloudinary');
+const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS and static folder
+// Middleware
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
@@ -30,7 +30,7 @@ cloudinary.config({
     api_secret: 'SyuVSFSCXN8JZazE6giS_FSoOOk',
 });
 
-// Multer storage with Cloudinary
+// Cloudinary storage setup
 const storage = new CloudinaryStorage({
     cloudinary: cloudinary,
     params: {
@@ -40,7 +40,7 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-// Hardcoded owner credentials
+// Owner credentials
 const ownerUsername = 'owner';
 const ownerPassword = 'password123';
 
@@ -54,17 +54,13 @@ app.post('/login', (req, res) => {
     res.status(401).send('Invalid login');
 });
 
-// Upload route
-app.post('/api/upload', upload.single('image'), (req, res) => {
-    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
-
-    res.status(200).json({
-        filePath: req.file.path,
-        public_id: req.file.filename // Needed for deletion
-    });
+// Upload image to Cloudinary
+app.post('/api/upload', upload.single('file'), (req, res) => {
+    if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+    res.status(200).json({ url: req.file.path, public_id: req.file.filename });
 });
 
-// Fetch gallery images from Cloudinary
+// Fetch images from Cloudinary
 app.get('/api/gallery', async (req, res) => {
     try {
         const result = await cloudinary.search
@@ -75,7 +71,7 @@ app.get('/api/gallery', async (req, res) => {
 
         const gallery = result.resources.map(file => ({
             url: file.secure_url,
-            public_id: file.public_id
+            public_id: file.public_id,
         }));
 
         res.json({ gallery });
@@ -85,19 +81,17 @@ app.get('/api/gallery', async (req, res) => {
 });
 
 // Delete image from Cloudinary
-app.delete('/api/gallery/delete/:public_id', async (req, res) => {
+app.delete('/api/gallery/delete/:publicId', async (req, res) => {
+    const publicId = req.params.publicId;
     try {
-        const result = await cloudinary.uploader.destroy(req.params.public_id);
-        if (result.result !== 'ok') {
-            throw new Error('Delete failed');
-        }
-        res.json({ message: 'Image deleted' });
-    } catch (err) {
-        res.status(500).json({ error: err.message || 'Deletion failed' });
+        await cloudinary.uploader.destroy(publicId);
+        res.json({ success: true });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete image' });
     }
 });
 
-// Root
+// Root route
 app.get('/', (req, res) => res.send('Backend is running...'));
 
 // Start server
