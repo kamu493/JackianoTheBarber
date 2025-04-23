@@ -1,23 +1,24 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const router = express.Router();
 const multer = require('multer');
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
-const cloudinary = require('../cloudinaryConfig'); // make sure this file exports configured cloudinary object
+const cloudinary = require('../cloudinaryConfig');
 
-const router = express.Router();
-
-// Cloudinary storage setup
 const storage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: {
     folder: 'jakiano-gallery',
     allowed_formats: ['jpg', 'jpeg', 'png'],
-    public_id: (req, file) => file.originalname.split('.')[0] + '-' + Date.now(),
   },
 });
 
 const upload = multer({ storage: storage });
 
-// Upload Route
+const galleryFile = path.join(__dirname, '../gallery.json');
+
+// Upload image to Cloudinary
 router.post('/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No image uploaded' });
@@ -25,42 +26,54 @@ router.post('/upload', upload.single('image'), (req, res) => {
 
   res.status(200).json({
     url: req.file.path,
-    public_id: req.file.filename, // important for deleting
+    public_id: req.file.filename,
   });
 });
 
-// Fetch all images (you’ll need to store them somewhere or load from DB in real app)
-let uploadedImages = []; // Temporary in-memory array (not for production)
-
-// Add uploaded image to list
+// Save uploaded image info
 router.post('/save-image', (req, res) => {
   const { url, public_id } = req.body;
-  if (url && public_id) {
-    uploadedImages.push({ url, public_id });
-    res.status(200).json({ message: 'Image saved' });
-  } else {
-    res.status(400).json({ error: 'Invalid image data' });
-  }
+  if (!url || !public_id) return res.status(400).json({ error: 'Missing fields' });
+
+  fs.readFile(galleryFile, 'utf8', (err, data) => {
+    const images = err ? [] : JSON.parse(data);
+    images.push({ url, public_id });
+
+    fs.writeFile(galleryFile, JSON.stringify(images, null, 2), err => {
+      if (err) return res.status(500).json({ error: 'Failed to save image' });
+      res.status(200).json({ message: 'Image saved' });
+    });
+  });
 });
 
-// Get gallery
+// Fetch gallery
 router.get('/', (req, res) => {
-  res.status(200).json({ gallery: uploadedImages });
+  fs.readFile(galleryFile, 'utf8', (err, data) => {
+    if (err) return res.status(500).json({ error: 'Failed to fetch gallery' });
+    const images = JSON.parse(data || '[]');
+    res.json({ gallery: images });
+  });
 });
 
 // Delete image
-router.delete('/delete/:public_id', async (req, res) => {
+router.delete('/delete/:public_id', (req, res) => {
   const publicId = req.params.public_id;
 
-  try {
-    await cloudinary.uploader.destroy(`jakiano-gallery/${publicId}`);
-    // Remove from array
-    uploadedImages = uploadedImages.filter(img => img.public_id !== publicId);
-    res.status(200).json({ message: 'Image deleted' });
-  } catch (error) {
-    console.error('Delete error:', error);
-    res.status(500).json({ error: 'Failed to delete image' });
-  }
+  cloudinary.uploader.destroy(publicId, (err, result) => {
+    if (err) return res.status(500).json({ error: 'Cloudinary deletion failed' });
+
+    // Remove from gallery.json
+    fs.readFile(galleryFile, 'utf8', (err, data) => {
+      if (err) return res.status(500).json({ error: 'Error reading gallery data' });
+      let images = JSON.parse(data || '[]');
+      images = images.filter(img => img.public_id !== publicId);
+
+      fs.writeFile(galleryFile, JSON.stringify(images, null, 2), err => {
+        if (err) return res.status(500).json({ error: 'Failed to update gallery' });
+        res.status(200).json({ message: 'Image deleted' });
+      });
+    });
+  });
 });
 
 module.exports = router;
