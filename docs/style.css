@@ -27,7 +27,7 @@ nav img {
     height: 100px;
     width: 100px;
     border-radius: 50px
-    
+
 }
 
 .hero {
@@ -45,7 +45,7 @@ nav img {
     object-fit: cover;
     animation: slide 10s infinite;
     border-radius: 15px;
-   
+
 }
 
 @keyframes slide {
@@ -131,7 +131,7 @@ p2 {
     /* Make text bold */
     color: white;
     /* Text color */
-   
+
     padding: 20px;
     /* Padding around the container */
     margin: 20px auto;
@@ -148,23 +148,59 @@ p2 {
     font-size: 24px;
     font-weight: 700;
     margin-bottom: 10px;
-   
+
 }
 
 .services-container p {
     margin: 5px 0;
     /* Adds spacing between items */
- 
+
 }
 
-/* Gallery Preview Section */
-.gallery-preview {
-    margin: 2rem auto;
+.slider-container {
+    position: relative;
+    max-width: 100%;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 20px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+}
+
+.slider {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+    width: 100%;
+}
+
+.slider img {
+    width: 100%;
+    height: auto;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.indicators {
     text-align: center;
-    max-width: 90%;
+    margin-top: 10px;
 }
 
-.gallery-preview h2 {
+.indicators .dot {
+    height: 12px;
+    width: 12px;
+    margin: 0 4px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.indicators .dot.active {
+    background-color: #333;
+}
+
+
+.slider-container h2 {
     font-size: 2rem;
     margin-bottom: 1rem;
     color: #0a0a0a;
@@ -172,27 +208,6 @@ p2 {
     border-radius: 20px;
 }
 
-/* Grid Layout */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    justify-items: center;
-    align-items: center;
-}
-
-.grid img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease
-}
-
-.grid img:hover {
-    transform: scale(1.05);
-    cursor: pointer;
-}
 
 nav ul {
     list-style: none;
@@ -213,8 +228,6 @@ nav a {
     transition: 0.3s ease-in-out;
     padding: 10px 20px;
     border-radius: 20px;
-   
-
 }
 
 
@@ -236,7 +249,7 @@ hr {
     border-radius: 100px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     animation: fadeIn 1s ease-in-out;
-  
+
 }
 
 
@@ -335,7 +348,7 @@ nav ul li a {
     border-radius: 15px;
     width: 100%;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.616);
-   
+
 }
 
 form {
