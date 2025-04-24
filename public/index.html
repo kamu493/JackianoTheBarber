@@ -2,13 +2,6 @@
 <html lang="en">
 
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', 'G-FKSEWZCG5R');
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jakiano The Barber</title>
@@ -41,8 +34,10 @@
     <hr>
     <hr>
     <p>Premium haircuts with style and precision</p>
-<br>
-    <!-- Sliding Gallery with Indicators -->
+
+    <br>
+
+    <!-- Sliding Gallery -->
     <div class="slider-container">
         <h2>Hair Styles</h2>
         <br>
@@ -65,19 +60,21 @@
                 <tr><td>Beard Trim</td><td>$15</td></tr>
                 <tr><td>Shave</td><td>$10</td></tr>
                 <tr><td>Haircut & Beard Trim</td><td>$30</td></tr>
-                <tr><td>Haircut</td><td>$20</td></tr>
-                <tr><td>Beard Trim</td><td>$20</td></tr>
-                <tr><td>Shave</td><td>$10</td></tr>
-                <tr><td>Haircut & Beard Trim</td><td>$30</td></tr>
             </tbody>
         </table>
     </section>
 
-    <!-- Script to load galleries -->
+    <!-- Optional: Gallery Grid for image display -->
+    <div id="galleryGrid" class="gallery-grid"></div>
+
+    <!-- Load gallery images from backend -->
     <script>
         async function loadGallery() {
             try {
-                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
+                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery', {
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
                 const data = await response.json();
 
                 const galleryGrid = document.getElementById('galleryGrid');
@@ -97,7 +94,10 @@
 
         async function loadSliderGallery() {
             try {
-                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
+                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery', {
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
                 const data = await response.json();
 
                 const slider = document.getElementById('imageSlider');
