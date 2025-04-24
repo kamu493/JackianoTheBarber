@@ -12,6 +12,9 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Configure CORS
+const cors = require('cors');
+app.use(cors({ origin: '*' }));
+
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
