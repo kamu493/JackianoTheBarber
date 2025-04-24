@@ -26,7 +26,9 @@
             <li><button><a href="index2.html">Contact</a></button></li>
         </ul>
     </nav>
+
     <br>
+
     <div class="hero">
         <img src="images/images1.png" alt="Work 1">
         <img src="images/images2.png" alt="Work 2">
@@ -34,23 +36,26 @@
         <img src="images/images4.png" alt="Work 4">
         <img src="images/images5.png" alt="Work 5">
     </div>
+
     <h1 id="moving-title">Welcome to Jakiano The Barber</h1>
     <hr>
     <hr>
-    <p1>Premium haircuts with style and precision</p1>
+    <p>Premium haircuts with style and precision</p>
 
-<!-- Sliding Gallery with Indicators -->
-<div class="slider-container">
-    <h2>Hair Styles</h2>
-     <br>
-    <div class="slider" id="imageSlider">
-        <!-- Sliding images will be injected here -->
+    <!-- Uploaded Gallery Grid -->
+    <div id="galleryGrid" class="gallery-grid">
+        <!-- Dynamically loaded uploaded images will go here -->
     </div>
-    <div class="indicators" id="sliderIndicators">
-        <!-- Navigation dots -->
+
+    <!-- Sliding Gallery with Indicators -->
+    <div class="slider-container">
+        <h2>Hair Styles</h2>
+        <br>
+        <div class="slider" id="imageSlider"></div>
+        <div class="indicators" id="sliderIndicators"></div>
     </div>
-</div>
- 
+
+    <!-- Services Table -->
     <section id="menu" class="menu">
         <h2>Services & Prices</h2>
         <table>
@@ -61,115 +66,92 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>Haircut</td>
-                    <td>$20</td>
-                </tr>
-                <tr>
-                    <td>Beard Trim</td>
-                    <td>$15</td>
-                </tr>
-                <tr>
-                    <td>Shave</td>
-                    <td>$10</td>
-                </tr>
-                <tr>
-                    <td>Haircut & Beard Trim</td>
-                    <td>$30</td>
-                </tr>
-
-                <tr>
-                    <td>Haircut</td>
-                    <td>$20</td>
-                </tr>
-                <tr>
-                    <td>Beard Trim</td>
-                    <td>$20</td>
-                </tr>
-                <tr>
-                    <td>Shave</td>
-                    <td>$10</td>
-                </tr>
-                <tr>
-                    <td>Haircut & Beard Trim</td>
-                    <td>$30</td>
-                </tr>
+                <tr><td>Haircut</td><td>$20</td></tr>
+                <tr><td>Beard Trim</td><td>$15</td></tr>
+                <tr><td>Shave</td><td>$10</td></tr>
+                <tr><td>Haircut & Beard Trim</td><td>$30</td></tr>
+                <tr><td>Haircut</td><td>$20</td></tr>
+                <tr><td>Beard Trim</td><td>$20</td></tr>
+                <tr><td>Shave</td><td>$10</td></tr>
+                <tr><td>Haircut & Beard Trim</td><td>$30</td></tr>
             </tbody>
         </table>
     </section>
 
+    <!-- Script to load galleries -->
     <script>
-    async function loadGallery() {
-        try {
-            const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
-            const data = await response.json();
+        async function loadGallery() {
+            try {
+                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
+                const data = await response.json();
 
-            const galleryGrid = document.getElementById('galleryGrid');
-            galleryGrid.innerHTML = '';
+                const galleryGrid = document.getElementById('galleryGrid');
+                galleryGrid.innerHTML = '';
 
-            data.gallery.forEach((url) => {
-                const img = document.createElement('img');
-                img.src = img.src = url;
-                img.alt = 'Uploaded Image';
-                img.className = 'grid';
-                galleryGrid.appendChild(img);
-            });
-        } catch (error) {
-            console.error('Error loading gallery:', error);
-        }
-    }
-
-    async function loadSliderGallery() {
-        try {
-            const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
-            const data = await response.json();
-
-            const slider = document.getElementById('imageSlider');
-            const indicators = document.getElementById('sliderIndicators');
-
-            slider.innerHTML = '';
-            indicators.innerHTML = '';
-
-            let currentIndex = 0;
-
-            data.gallery.forEach((url, index) => {
-                const img = document.createElement('img');
-                img.src = `https://jackianothebarber.onrender.com${url}`;
-                img.alt = `Slide ${index + 1}`;
-                slider.appendChild(img);
-
-                const dot = document.createElement('span');
-                dot.className = 'dot';
-                if (index === 0) dot.classList.add('active');
-                dot.addEventListener('click', () => {
-                    currentIndex = index;
-                    updateSlider();
+                data.gallery.forEach((url) => {
+                    const img = document.createElement('img');
+                    img.src = `https://jackianothebarber.onrender.com${url}`;
+                    img.alt = 'Uploaded Image';
+                    img.className = 'grid';
+                    galleryGrid.appendChild(img);
                 });
-                indicators.appendChild(dot);
-            });
-
-            function updateSlider() {
-                const offset = -currentIndex * 100;
-                slider.style.transform = `translateX(${offset}%)`;
-
-                const dots = indicators.querySelectorAll('.dot');
-                dots.forEach(dot => dot.classList.remove('active'));
-                dots[currentIndex].classList.add('active');
+            } catch (error) {
+                console.error('Error loading gallery:', error);
             }
-
-            setInterval(() => {
-                currentIndex = (currentIndex + 1) % data.gallery.length;
-                updateSlider();
-            }, 4000);
-        } catch (err) {
-            console.error('Error loading slider gallery:', err);
         }
-    }
 
-    window.onload = () => {
-        loadGallery();
-        loadSliderGallery();
-    };
-</script>       
+        async function loadSliderGallery() {
+            try {
+                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery');
+                const data = await response.json();
 
+                const slider = document.getElementById('imageSlider');
+                const indicators = document.getElementById('sliderIndicators');
+
+                slider.innerHTML = '';
+                indicators.innerHTML = '';
+
+                let currentIndex = 0;
+
+                data.gallery.forEach((url, index) => {
+                    const img = document.createElement('img');
+                    img.src = `https://jackianothebarber.onrender.com${url}`;
+                    img.alt = `Slide ${index + 1}`;
+                    slider.appendChild(img);
+
+                    const dot = document.createElement('span');
+                    dot.className = 'dot';
+                    if (index === 0) dot.classList.add('active');
+                    dot.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateSlider();
+                    });
+                    indicators.appendChild(dot);
+                });
+
+                function updateSlider() {
+                    const offset = -currentIndex * 100;
+                    slider.style.transform = `translateX(${offset}%)`;
+
+                    const dots = indicators.querySelectorAll('.dot');
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    dots[currentIndex].classList.add('active');
+                }
+
+                setInterval(() => {
+                    currentIndex = (currentIndex + 1) % data.gallery.length;
+                    updateSlider();
+                }, 4000);
+            } catch (err) {
+                console.error('Error loading slider gallery:', err);
+            }
+        }
+
+        window.onload = () => {
+            loadGallery();
+            loadSliderGallery();
+        };
+    </script>
 </body>
+
+</html>
