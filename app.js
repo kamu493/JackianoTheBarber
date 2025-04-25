@@ -45,7 +45,7 @@ const upload = multer({ storage });
 // Owner credentials
 const ownerUsername = 'owner';
 // Hashed password for 'password123'
-const ownerHashedPassword = '$2b$10$9WZwA1RdyA3b.qWrRIo3nOGDYZGSbxVSRDFF1.NkPS3FFZ/WvDpLm';
+const ownerHashedPassword = '$2b$10$Zkkc8e0XwCECluU4lNjEze1CLzDVLjEc7ijY7dvq1BzJJrCTmKkAK';
 
 // Login route
 app.post('/login', async (req, res) => {
