@@ -3,11 +3,10 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const session = require('express-session');
 const multer = require('multer');
-const fs = require('fs');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
+const bcrypt = require('bcrypt');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,7 +24,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
-// Cloudinary configuration
+// Cloudinary config
 cloudinary.config({
     cloud_name: 'dkwl93p8f',
     api_key: '859149683439439',
@@ -42,23 +41,20 @@ const storage = new CloudinaryStorage({
 });
 const upload = multer({ storage });
 
-// Owner credentials
+// Admin credentials
 const ownerUsername = 'owner';
-// Hashed password for 'password123'
-const ownerHashedPassword = '$2b$10$Zkkc8e0XwCECluU4lNjEze1CLzDVLjEc7ijY7dvq1BzJJrCTmKkAK';
+const hashedPassword = '$2b$10$xaj9EdAo6aD0Nd1nJJ4vTeKnqXoASDM81ek5.2jyo9wAiHq1JvHVa'; // "phoofolo" hashed
 
 // Login route
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-
     if (username === ownerUsername) {
-        const isMatch = await bcrypt.compare(password, ownerHashedPassword);
-        if (isMatch) {
+        const match = await bcrypt.compare(password, hashedPassword);
+        if (match) {
             req.session.loggedIn = true;
             return res.redirect('/gallery.html');
         }
     }
-
     res.status(401).send('Invalid login');
 });
 
@@ -68,7 +64,7 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
     res.status(200).json({ filePath: req.file.path });
 });
 
-// Gallery route - fetch from Cloudinary
+// Gallery route
 app.get('/api/gallery', async (req, res) => {
     try {
         const result = await cloudinary.search
