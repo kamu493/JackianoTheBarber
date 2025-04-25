@@ -41,7 +41,7 @@ const upload = multer({ storage });
 
 // Admin credentials
 const ownerUsername = 'owner';
-const hashedPassword = '$2b$10$jAXiUn0ElAx8IkEisYMuJemysjCOgRI2Ib.6xEZ8BvJjWUJAk6IF2'; // 'phoofolo'
+const hashedPassword = '$2a$12$HwnjxSAXJ6h0l3LYZDphSeykrJFguYrIAQUbJKQfYZrOz1QSdT0Cy'; // 'phoofolo'
 
 // Routes
 app.get('/', (req, res) => res.send('Backend is running...'));
