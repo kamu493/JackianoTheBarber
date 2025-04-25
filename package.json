@@ -15,6 +15,5 @@
     "multer-storage-cloudinary": "^4.0.0",
     "cloudinary": "^1.36.0",
     "bcrypt": "^5.1.0"
-  ...
   }
 }
