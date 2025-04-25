@@ -42,12 +42,14 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage });
 
 // Admin credentials
-const ownerUsername = 'owner';
-const hashedPassword = '$2b$10$xaj9EdAo6aD0Nd1nJJ4vTeKnqXoASDM81ek5.2jyo9wAiHq1JvHVa'; // "phoofolo" hashed
+const bcrypt = require('bcrypt');
 
-// Login route
+const ownerUsername = 'owner';
+const hashedPassword = '$2b$10$jAXiUn0ElAx8IkEisYMuJemysjCOgRI2Ib.6xEZ8BvJjWUJAk6IF2'; // hashed version of 'phoofolo'
+
 app.post('/login', async (req, res) => {
     const { username, password } = req.body;
+
     if (username === ownerUsername) {
         const match = await bcrypt.compare(password, hashedPassword);
         if (match) {
@@ -55,6 +57,7 @@ app.post('/login', async (req, res) => {
             return res.redirect('/gallery.html');
         }
     }
+
     res.status(401).send('Invalid login');
 });
 
