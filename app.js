@@ -5,6 +5,7 @@ const session = require('express-session');
 const multer = require('multer');
 const fs = require('fs');
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 const cloudinary = require('cloudinary').v2;
 const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
@@ -43,15 +44,21 @@ const upload = multer({ storage });
 
 // Owner credentials
 const ownerUsername = 'owner';
-const ownerPassword = 'password123';
+// Hashed password for 'password123'
+const ownerHashedPassword = '$2b$10$9WZwA1RdyA3b.qWrRIo3nOGDYZGSbxVSRDFF1.NkPS3FFZ/WvDpLm';
 
 // Login route
-app.post('/login', (req, res) => {
+app.post('/login', async (req, res) => {
     const { username, password } = req.body;
-    if (username === ownerUsername && password === ownerPassword) {
-        req.session.loggedIn = true;
-        return res.redirect('/gallery.html');
+
+    if (username === ownerUsername) {
+        const isMatch = await bcrypt.compare(password, ownerHashedPassword);
+        if (isMatch) {
+            req.session.loggedIn = true;
+            return res.redirect('/gallery.html');
+        }
     }
+
     res.status(401).send('Invalid login');
 });
 
@@ -76,6 +83,8 @@ app.get('/api/gallery', async (req, res) => {
     }
 });
 
-// Start server
+// Root route
 app.get('/', (req, res) => res.send('Backend is running...'));
+
+// Start server
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
