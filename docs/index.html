@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jakiano The Barber</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="kscript.js"></script>
+    <link rel="icon" type="images/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="images/png" sizes="16x16" href="favicon-16x16.png">
+</head>
+
+<body>
+    <nav>
+        <img src="images/images0.jpg" alt="Jakiano The Barber Logo" width="80px">
+        <ul class="sidebar-nav">
+            <li><button><a href="index.html">Home</a></button></li>
+            <li><button><a href="index2.html">Contact</a></button></li>
+        </ul>
+    </nav>
+
+    <br>
+
+    <div class="hero">
+        <img src="images/images1.jpg" alt="Work 1">
+        <img src="images/images2.jpg" alt="Work 2">
+        <img src="images/images3.jpg" alt="Work 3">
+        <img src="images/images4.jpg" alt="Work 4">
+        <img src="images/images7.jpg" alt="Work 5">
+    </div>
+
+    <h1 id="moving-title">WELCOME TO JAKIANO THE BARBER</h1>
+    <hr>
+    <hr>
+    <p>Premium haircuts with style and precision</p>
+
+    <!-- Sliding Gallery -->
+    <div class="slider-container">
+        <h2>Hair Styles</h2>
+        <div class="slider" id="imageSlider"></div>
+        <div class="indicators" id="sliderIndicators"></div>
+    </div>
+
+    <section id="community-service" class="community-service">
+        <h2>Giving Back to the Community</h2>
+        <p>At Jakiano The Barber, we believe in making a difference. We provide free haircut services at schools and
+            orphanages to support our community.</p>
+        <p>If you would like to request this service for your school or orphanage, please fill out the form below:</p>
+        <a href="form.html" class="btn">Request Free Haircut Services</a>
+    </section>
+
+    <!-- Services Table -->
+    <section id="menu" class="menu">
+        <h2>Services & Prices</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Service</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Adult cut</td>
+                    <td>R100</td>
+                </tr>
+                <tr>
+                    <td>Kids cut</td>
+                    <td>R80</td>
+               </tr> 
+                <tr>
+                    <td>Cut and black dye</td>
+                    <td>R200</td>
+                </tr>
+                <tr>
+                    <td>Cut and black dye kids</td>
+                    <td>R180</td>
+                </tr>
+                <tr>
+                    <td>Cut and other colour dyes</td>
+                    <td>R370</td>
+                </tr>
+                <tr>
+                    <td>cut and other colour dyes for kids</td>
+                    <td>R270</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Load gallery images from backend -->
+    <script>
+        async function loadGallery() {
+            try {
+                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery', {
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
+                const data = await response.json();
+
+                const galleryGrid = document.getElementById('galleryGrid');
+                galleryGrid.innerHTML = '';
+
+                data.gallery.forEach((url) => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = 'Uploaded Image';
+                    img.className = 'grid';
+                    galleryGrid.appendChild(img);
+                });
+            } catch (error) {
+                console.error('Error loading gallery:', error);
+            }
+        }
+
+        async function loadSliderGallery() {
+            try {
+                const response = await fetch('https://jackianothebarber.onrender.com/api/gallery', {
+                    headers: { 'Content-Type': 'application/json' },
+                    mode: 'cors'
+                });
+                const data = await response.json();
+
+                const slider = document.getElementById('imageSlider');
+                const indicators = document.getElementById('sliderIndicators');
+
+                slider.innerHTML = '';
+                indicators.innerHTML = '';
+
+                let currentIndex = 0;
+
+                data.gallery.forEach((url, index) => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.alt = `Slide ${index + 1}`;
+                    slider.appendChild(img);
+
+                    const dot = document.createElement('span');
+                    dot.className = 'dot';
+                    if (index === 0) dot.classList.add('active');
+                    dot.addEventListener('click', () => {
+                        currentIndex = index;
+                        updateSlider();
+                    });
+                    indicators.appendChild(dot);
+                });
+
+                function updateSlider() {
+                    const offset = -currentIndex * 100;
+                    slider.style.transform = `translateX(${offset}%)`;
+
+                    const dots = indicators.querySelectorAll('.dot');
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    dots[currentIndex].classList.add('active');
+                }
+
+                setInterval(() => {
+                    currentIndex = (currentIndex + 1) % data.gallery.length;
+                    updateSlider();
+                }, 4000);
+            } catch (err) {
+                console.error('Error loading slider gallery:', err);
+            }
+        }
+
+        window.onload = () => {
+            loadGallery();
+            loadSliderGallery();
+        };
+    </script>
+</body>
+
+</html>
