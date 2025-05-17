@@ -1,7 +1,7 @@
 {
-  "name": "jakiano-backend",
+  "name": "jackiano-backend",
   "version": "1.0.0",
-  "description": "Backend for Jakiano The Barber",
+  "description": "Backend for Jackiano The Barber",
   "main": "app.js",
   "scripts": {
     "start": "node app.js"
